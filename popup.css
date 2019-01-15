@@ -1,0 +1,36 @@
+.popup {
+    min-width: 350px;
+    min-height: 100px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.game {
+    margin: 15px 0px;
+}
+
+.game_title {
+    font-size: 16px;
+    border-bottom: 1px solid #808080;
+}
+
+.stream {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    height: 30px;
+    text-decoration: none;
+    color: #000000;
+    border-bottom: 1px dashed #808080;
+}
+
+.stream:active {
+    background: #808080;
+}
+
+.heading {
+    font-size: 18px;
+    border-bottom: 1px solid #808080;
+    text-align: center;
+    padding-bottom: 10px;
+}
