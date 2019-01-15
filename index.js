@@ -4,32 +4,39 @@ var STREAMING_ENDPOINT = 'https://api.twitch.tv/helix/streams?user_login=';
 var CLIENT_ID = '<CLIENT_ID_HERE>';
 
 function fetchLiveStreams() {
-    var live = [];
-    fetchUserData().then(function(user) {
-        fetchFollowingList(user).then(function(list) {
-            fetchStreamerInfoList(list).then(function(statuses) {
-                live = statuses.filter(function(status) {
-                    return status.type === 'live';
-                });
-                chrome.storage.sync.set({ liveStreamers: live });
-            })
+    return new Promise(function(resolve, reject) {
+        var live = [];
+        fetchUserData().then(function(user) {
+            fetchFollowingList(user).then(function(list) {
+                fetchStreamerInfoList(list).then(function(statuses) {
+                    live = statuses.filter(function(status) {
+                        return status.type === 'live';
+                    });
+                    chrome.storage.sync.set({ liveStreamers: live });
+                    resolve();
+                })
+            });
         });
     });
 }
 
 function fetchUserData() {
     return new Promise(function(resolve, reject) {
-        var url = USER_ENDPOINT + userName;
-        fetch(url, {
-            headers: {
-                "Client-ID": CLIENT_ID
-            }
-        })
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(json) {
-            resolve(json && json.data && json.data[0] && json.data[0].id);
+        let userName = '';
+        chrome.storage.sync.get('username', function (obj) {
+            userName = obj.username;
+            var url = USER_ENDPOINT + userName;
+            fetch(url, {
+                headers: {
+                    "Client-ID": CLIENT_ID
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                resolve(json && json.data && json.data[0] && json.data[0].id);
+            });
         });
     });
 }
@@ -73,8 +80,3 @@ function fetchStreamerInfoList(following) {
     });
     return Promise.all(streamerPromises);
 }
-
-chrome.storage.sync.get('username', function(obj) {
-    if (obj.username)
-        fetchLiveStreams();
-});
